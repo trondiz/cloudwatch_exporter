@@ -69,13 +69,11 @@ func handleTarget(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	configMutex.Lock()
 	registry := prometheus.NewRegistry()
 	collector, err := NewCwCollector(target, task, region)
 	if err != nil {
 		// Can't create the collector, display error
 		fmt.Fprintf(w, "Error: %s\n", err.Error())
-		configMutex.Unlock()
 		return
 	}
 
@@ -86,7 +84,6 @@ func handleTarget(w http.ResponseWriter, req *http.Request) {
 
 	// Serve the answer through the Collect method of the Collector
 	handler.ServeHTTP(w, req)
-	configMutex.Unlock()
 }
 
 func main() {
